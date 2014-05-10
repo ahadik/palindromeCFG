@@ -3,11 +3,8 @@ package CFG;
 import java.util.LinkedList;
 
 public class production {
-	double productionProb;
 	
-	public production(double probability){
-		this.productionProb = probability;
-	}
+	LinkedList<rule> possibleTerminals;
 	
 	/*
 	 * INPUT: A linked list of production rule

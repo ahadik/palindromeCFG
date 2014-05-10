@@ -5,14 +5,29 @@ import java.util.Random;
 
 public class terminal extends production {
 	
+	LinkedList<rule> possibleTerminals;
 	productionTerminal value;
 
-	public terminal(double probability, LinkedList<rule> terminals) throws prodRuleProbException {
-		super(probability);
-		this.value = generateTerminals(terminals);
+	public void generateValue() throws prodRuleProbException {
+		this.value = generateTerminals();
 	}
 	
-	private productionTerminal generateTerminals(LinkedList<rule> rules) throws prodRuleProbException{
+	//Define a custom to string for this class
+	@Override public String toString(){
+		return value.value;
+	}
+	
+	public void setValues(LinkedList<rule> terminals){
+		this.possibleTerminals = terminals;
+	}
+	
+	public void setValue(productionTerminal value){
+		this.value = value;
+	}
+	
+	private productionTerminal generateTerminals() throws prodRuleProbException{
+		
+		LinkedList<rule> rules = this.possibleTerminals;
 		
 		//Check that the production rules have a proper probability mass
 		if(checkProductionList(rules)){

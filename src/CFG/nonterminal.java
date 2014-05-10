@@ -5,15 +5,28 @@ import java.util.Random;
 
 public class nonterminal extends production {
 	
+	LinkedList<rule> possibleRules;
 	productionRule rule;
+	boolean isP;
 
-	public nonterminal(double probability) throws prodRuleProbException {
-		super(probability);
-		//Set this production rule by randomly selecting from the rule list passed as an argument to the constructor.
+	
+	public void setRules(LinkedList<rule> rules, boolean prodType){
+		this.possibleRules = rules;
+		this.isP = prodType;
 	}
 	
-	public void setRule(LinkedList<rule> rules) throws prodRuleProbException{
-		this.rule = generateProduction(rules);
+	//Define a custom to string for this class
+	@Override public String toString(){
+		if(isP){
+			return "P";
+		}else{
+			return "Q";
+		}
+	}
+	
+	//Use the generateProduction method to set the internal production rule
+	public void generateRule() throws prodRuleProbException{
+		this.rule = generateProduction();
 	}
 	
 	/*
@@ -25,13 +38,15 @@ public class nonterminal extends production {
 			seqQueue.push(prod);
 		}
 	}
+	
+	
 
 	/*
 	 * INPUT: A linked list of possible rules that this production can evaluate to
 	 * OUTPUT: A single rule selected based upon the probability weight assigned to each rule
 	 */
-	private productionRule generateProduction(LinkedList<rule> rules) throws prodRuleProbException{
-		
+	productionRule generateProduction() throws prodRuleProbException{
+		LinkedList<rule> rules = this.possibleRules;
 		//Check that the production rules have a proper probability mass
 		if(checkProductionList(rules)){
 			//Generate a random number from uniform dist
