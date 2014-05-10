@@ -12,6 +12,7 @@ public class production {
 	 */
 	protected boolean checkProductionList(LinkedList<rule> rules) throws prodRuleProbException{
 		double totalMass = 0.0;
+		//System.out.println(rules);
 		for (rule rule : rules){
 			totalMass+=rule.probability;
 		}

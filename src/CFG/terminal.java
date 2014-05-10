@@ -5,8 +5,14 @@ import java.util.Random;
 
 public class terminal extends production {
 	
+	boolean setValue = false;
+	boolean isNull;
 	LinkedList<rule> possibleTerminals;
 	productionTerminal value;
+	
+	public terminal(boolean term){
+		this.isNull=term;
+	}
 
 	public void generateValue() throws prodRuleProbException {
 		this.value = generateTerminals();
@@ -14,7 +20,13 @@ public class terminal extends production {
 	
 	//Define a custom to string for this class
 	@Override public String toString(){
-		return value.value;
+		if(this.setValue){
+			return "T*";
+		}else if(isNull){
+			return "T-";
+		}else{
+			return "T";
+		}
 	}
 	
 	public void setValues(LinkedList<rule> terminals){
@@ -23,6 +35,11 @@ public class terminal extends production {
 	
 	public void setValue(productionTerminal value){
 		this.value = value;
+		this.setValue = true;
+		
+		//System.out.println("Setting value");
+		//System.out.println(this.value);
+		
 	}
 	
 	private productionTerminal generateTerminals() throws prodRuleProbException{

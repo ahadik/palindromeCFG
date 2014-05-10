@@ -12,12 +12,12 @@ public class Generator {
 	
 	//Probability weights for Q production rules
 	static double Qcontinue = .95;
-	static double Qpalindrome = .09;
-	static double Qend = .01;
+	static double Qpalindrome = .049;
+	static double Qend = .001;
 	
 	//Probability weights for P production rules
-	double Pnest = .8;
-	double Pterminate = .2;
+	double Pnest = .65;
+	double Pterminate = .35;
 	
 	//define terminals for A,T,C,G
 	static productionTerminal terminalA = new productionTerminal("A", Aprob);
@@ -31,44 +31,47 @@ public class Generator {
 	static nonterminal Qnonterminal = new nonterminal();
 	
 	//define generic terminals
-	static terminal Qterminal = new terminal();
-	static terminal Pterminal = new terminal();
-	static terminal Endterminal = new terminal();
+	static terminal Qterminal = new terminal(false);
+	static terminal Pterminal = new terminal(false);
+	static terminal Endterminal = new terminal(true);
 	
 	
 	
-	//Instantiate list of terminals for random selection
+	static //Instantiate list of terminals for random selection
 	LinkedList<rule> terminals;
+	static LinkedList<rule> endterminal = new LinkedList<rule>();
 	
 	//Define productions for Q productions
-	LinkedList<production> extend;
+	LinkedList<production> extend = new LinkedList<production>();
 	productionRule extendRule;
-	LinkedList<production> palindromeStart;
+	LinkedList<production> palindromeStart = new LinkedList<production>();
 	productionRule palindromeStartRule;
-	LinkedList<production> terminateQ;
+	LinkedList<production> terminateQ = new LinkedList<production>();
 	productionRule terminateQRule;
 	
 	//Define productions for P productions
-	LinkedList<production> extendPalindrome;
+	LinkedList<production> extendPalindrome = new LinkedList<production>();
 	productionRule extendPalindromeRule;
 	productionRule terminatePalindromeRule;
 	
 	
-	LinkedList<rule> Qrules;
-	LinkedList<rule> Prules;
+	LinkedList<rule> Qrules = new LinkedList<rule>();
+	LinkedList<rule> Prules = new LinkedList<rule>();
 	
 	
 	public Generator(){
 		//Add all terminals to the list of terminals 
-		this.terminals = new LinkedList<rule>();
-		this.terminals.add(terminalA);
-		this.terminals.add(terminalT);
-		this.terminals.add(terminalC);
-		this.terminals.add(terminalG);
+		Generator.terminals = new LinkedList<rule>();
+		Generator.terminals.add(terminalA);
+		Generator.terminals.add(terminalT);
+		Generator.terminals.add(terminalC);
+		Generator.terminals.add(terminalG);
+		Generator.endterminal.add(terminalEnd);
 		
 		//Set the possible values of the Qterminal
 		Qterminal.setValues(this.terminals);
 		Pterminal.setValues(this.terminals);
+		Endterminal.setValues(this.endterminal);
 		
 		//Define the terminals and nonterminals for Q rules
 		
@@ -95,7 +98,7 @@ public class Generator {
 		
 		//extend palindrome
 		this.extendPalindrome.addLast(Pterminal);
-		this.extendPalindrome.addLast(Pnonterminal);
+		this.extendPalindrome.addFirst(Pnonterminal);
 		//this.extendPalindrome.addLast(Pterminal);
 		
 		
@@ -103,13 +106,11 @@ public class Generator {
 		this.terminatePalindromeRule = new productionRule(terminateQ, Pterminate);
 		
 		//Generate list of Q rules
-		this.Qrules = new LinkedList<rule>();
 		this.Qrules.add(extendRule);
 		this.Qrules.add(palindromeStartRule);
 		this.Qrules.add(terminateQRule);
 		
 		//Generate list of P rules
-		LinkedList<rule> Prules = new LinkedList<rule>();
 		this.Prules.add(extendPalindromeRule);
 		this.Prules.add(terminatePalindromeRule);
 		
@@ -127,7 +128,9 @@ public class Generator {
 		seqQueue.addLast(activeProduction);
 		
 		while (!seqQueue.isEmpty()){
+			//System.out.println(seqQueue);
 			activeProduction = seqQueue.getFirst();
+			seqQueue.removeFirst();
 			//Reset the production rule for this nonterminal randomly from the set of possible rules set as a parameter
 			
 			//if the active production is a nonterminal
@@ -138,24 +141,35 @@ public class Generator {
 					seqQueue.addFirst(prod);
 				}
 			}else if (activeProduction.getClass().equals(terminal.class)){
-				((terminal) activeProduction).generateValue();
+				//if this terminal did not have the value explicitly set upon instantiation
+				if(!((terminal) activeProduction).setValue){
+					//generate a random value
+					((terminal) activeProduction).generateValue();
+				}
 				//if the next production is a P
-				if(((nonterminal) seqQueue.peek()).isP){
-					/*
-					 * if the next nonterminal is P, that means this is a nest P rule, and we need to make a new terminal that is 
-					 * the complement of whatever value was randomly generated from generateValue() above 
-					 */
-					terminal complementaryTerminal = new terminal(); 
-					complementaryTerminal.setValue(complementaryTerminal(((terminal) activeProduction).value.value));
-					//insert the new complementary terminal after the P production that's up next 
-					seqQueue.add(1,complementaryTerminal);
+				if (((terminal) activeProduction).value.value!=null){
+					if(seqQueue.size()>0){
+						if(seqQueue.peek().getClass().equals(nonterminal.class)){
+							if((((nonterminal) seqQueue.peek()).isP)){
+								/*
+								 * if the next nonterminal is P, that means this is a nest P rule, and we need to make a new terminal that is 
+								 * the complement of whatever value was randomly generated from generateValue() above 
+								 */
+								terminal complementaryTerminal = new terminal(false); 
+								complementaryTerminal.setValue(complementaryTerminal(((terminal) activeProduction).value.value));
+								complementaryTerminal.setValues(terminals);
+								//insert the new complementary terminal after the P production that's up next 
+								seqQueue.add(1,complementaryTerminal);
+							}
+						}
+					}
 				}
 				if(((terminal) activeProduction).value.value!=null){
 					//concatenate the value onto the 
 					seqProduction=seqProduction+((terminal) activeProduction).value.value;
 				}
 			}
-			System.out.println(seqQueue);
+			
 		}
 		//return the filled out seqProduction
 		return seqProduction;
@@ -164,16 +178,16 @@ public class Generator {
 
 	public static productionTerminal complementaryTerminal(String value){
 		if(value.equals("A")){
-			return terminalA;
-		}
-		if(value.equals("T")){
 			return terminalT;
 		}
+		if(value.equals("T")){
+			return terminalA;
+		}
 		if(value.equals("C")){
-			return terminalC;
+			return terminalG;
 		}
 		if(value.equals("G")){
-			return terminalG;
+			return terminalC;
 		}
 		System.out.println("Complementary value not found. Returning null.");
 		return null;
@@ -186,7 +200,7 @@ public class Generator {
 		
 		Generator generator = new Generator();
 		
-		nonterminal startProduction = generator.Pnonterminal;
+		nonterminal startProduction = generator.Qnonterminal;
 		startProduction.generateProduction();
 		
 		String generatedSeq = generateSequence(startProduction);
