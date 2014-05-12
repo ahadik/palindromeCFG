@@ -25,3 +25,7 @@ Palindromes in DNA serve many purposes. Smaller palindromes serve as restriction
 
 It's quite clear that Palindromes are of biological interest, but there are two seminal problems when in comes to computation work with palindromes. The first is the development of probabilistic model for the random generation of palindromes. The second is the use of the probabilistic model to annotate DNA sequences to identify palindromes that are statistically significant according to the provided model.
 
+###Approach###
+A common approach to this problem is the use of a Probabilistic Context Free Grammar for the generation and annotation of DNA sequences embedded with palindromes.
+
+####Context Free Grammars####

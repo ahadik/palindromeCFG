@@ -3,41 +3,12 @@
 "children": [{
 "name": "Q",
 "children": [{
-"name": "P",
-"children": [{
 "name": "A",
 "size": 0
-}, {
-"name": "P",
-"children": [{
-"name": "T",
-"size": 0
-}, {
-"name": "P",
-"children": [{
-"name": "C",
-"size": 0
-}, {
-"name": "G",
-"size": 0
-}]
-}, {
-"name": "A",
-"size": 0
-}]
-}, {
-"name": "T",
-"size": 0
-}]
 }, {
 "name": "Q",
 "children": [{
 "name": "G",
-"size": 0
-}, {
-"name": "Q",
-"children": [{
-"name": "A",
 "size": 0
 }, {
 "name": "Q",
@@ -52,13 +23,54 @@
 }, {
 "name": "Q",
 "children": [{
+"name": "P",
+"children": [{
+"name": "C",
+"size": 0
+}, {
+"name": "P",
+"children": [{
 "name": "G",
+"size": 0
+}, {
+"name": "P",
+"children": [{
+"name": "A",
+"size": 0
+}, {
+"name": "T",
+"size": 0
+}]
+}, {
+"name": "C",
+"size": 0
+}]
+}, {
+"name": "G",
+"size": 0
+}]
+}, {
+"name": "Q",
+"children": [{
+"name": "T",
 "size": 0
 }, {
 "name": "Q",
 "children": [{
-"name": "A",
+"name": "T",
 "size": 0
+}, {
+"name": "Q",
+"children": [{
+"name": "C",
+"size": 0
+}, {
+"name": "Q",
+"children": [{
+"name": "G",
+"size": 0
+}]
+}]
 }]
 }]
 }]

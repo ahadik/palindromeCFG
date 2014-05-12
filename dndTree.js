@@ -1,5 +1,36 @@
+if (!Array.prototype.filter)
+{
+  Array.prototype.filter = function(fun /*, thisp*/)
+  {
+    var len = this.length;
+    if (typeof fun != "function")
+      throw new TypeError();
+
+    var res = new Array();
+    var thisp = arguments[1];
+    for (var i = 0; i < len; i++)
+    {
+      if (i in this)
+      {
+        var val = this[i]; // in case fun mutates this
+        if (fun.call(thisp, val, i, this))
+          res.push(val);
+      }
+    }
+
+    return res;
+  };
+}
+
+	function isPalindrome(element, index, array) {
+		if(element.source.name=="P"){
+			return true;
+		}
+	}
+
+
 // Get JSON data
-treeJSON = d3.json("test.json", function(error, treeData) {
+treeJSON = d3.json("data.json", function(error, treeData) {
 
     // Calculate total nodes, max label length
     var totalNodes = 0;
@@ -326,6 +357,9 @@ treeJSON = d3.json("test.json", function(error, treeData) {
         return d;
     }
 
+
+
+	
     // Toggle children on click.
 
     function click(d) {
@@ -356,7 +390,7 @@ treeJSON = d3.json("test.json", function(error, treeData) {
         tree = tree.size([newHeight, viewerWidth]);
 
         // Compute the new tree layout.
-        var nodes = tree.nodes(root).reverse(),
+        nodes = tree.nodes(root).reverse(),
             links = tree.links(nodes);
 
         // Set widths between levels based on maxLabelLength.
@@ -372,6 +406,10 @@ treeJSON = d3.json("test.json", function(error, treeData) {
             .data(nodes, function(d) {
                 return d.id || (d.id = ++i);
             });
+            
+        //palindrome = svgGroup.selectAll(".palindromeLink")
+        	//.data(palindromes)
+        	 //.attr("class", "palindromeLink")
 
         // Enter any new nodes at the parent's previous position.
         var nodeEnter = node.enter().append("g")
@@ -468,6 +506,7 @@ treeJSON = d3.json("test.json", function(error, treeData) {
             });
 
         // Enter any new links at the parent's previous position.
+    //    if(link.source.name=="P"){
         link.enter().insert("path", "g")
             .attr("class", "link")
             .attr("d", function(d) {
@@ -480,6 +519,18 @@ treeJSON = d3.json("test.json", function(error, treeData) {
                     target: o
                 });
             });
+//         }
+            
+        palindromes = links.filter(isPalindrome);
+    
+		colorLink = svgGroup.selectAll("path.palindromeLink")
+			.data(palindromes)
+			.attr("class", "palindromeLink")
+			
+		//colorLink.enter().insert("path","g")
+			
+			
+			
 
         // Transition links to their new position.
         link.transition()
@@ -506,17 +557,25 @@ treeJSON = d3.json("test.json", function(error, treeData) {
             d.x0 = d.x;
             d.y0 = d.y;
         });
+        
+
+        
     }
 
     // Append a group which holds all nodes and which the zoom Listener can act upon.
-    var svgGroup = baseSvg.append("g");
+    svgGroup = baseSvg.append("g");
 
     // Define the root
     root = treeData;
     root.x0 = viewerHeight / 2;
     root.y0 = 0;
+    
+    
 
     // Layout the tree initially and center on the root node.
     update(root);
     centerNode(root);
+
+
+    
 });
